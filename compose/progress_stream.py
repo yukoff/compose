@@ -1,3 +1,4 @@
+import six
 import json
 import os
 import codecs
@@ -9,12 +10,15 @@ class StreamOutputError(Exception):
 
 def stream_output(output, stream):
     is_terminal = hasattr(stream, 'fileno') and os.isatty(stream.fileno())
-    stream = codecs.getwriter('utf-8')(stream)
+    if six.PY2:
+        stream = codecs.getwriter('utf-8')(stream);
     all_events = []
     lines = {}
     diff = 0
 
     for chunk in output:
+        if six.PY3:
+            chunk = chunk.decode("utf-8")
         event = json.loads(chunk)
         all_events.append(event)
 

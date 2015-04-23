@@ -483,7 +483,9 @@ class Service(object):
         try:
             all_events = stream_output(build_output, sys.stdout)
         except StreamOutputError as e:
-            raise BuildError(self, unicode(e))
+            if six.PY2:
+                e = unicode(e)
+            raise BuildError(self, e)
 
         image_id = None
 
